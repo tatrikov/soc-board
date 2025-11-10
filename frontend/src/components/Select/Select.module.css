@@ -1,0 +1,91 @@
+.selectWrapper {
+  position: relative;
+  width: 100%;
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-normal);
+}
+
+.selectButton {
+  background-color: var(--color-card);
+  color: var(--color-card-foreground);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: 0.5rem 0.5rem 0.5rem 0.75rem;
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  box-sizing: border-box;
+  text-align: start;
+  transition: border 0.2s, background-color 0.2s;
+  
+}
+
+.selectButton:hover {
+  border-color: var(--color-primary);
+}
+
+.selectButton:focus {
+  outline: none;
+  border-color: var(--color-primary-hover);
+}
+
+.arrowIcon {
+  pointer-events: none;
+  margin-left: 0.5rem;
+}
+
+.options {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  left: 0;
+  width: 100%;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  opacity: 0;
+  transform: translateY(-5px);
+  pointer-events: none;
+  transition: opacity 0.1s ease, transform 0.2s ease;
+}
+
+.optionsOpen {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.option {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.option:hover {
+  background-color: var(--color-primary-transparent);
+}
+
+.optionSelected {
+  background-color: var(--color-primary-light);
+  color: var(--color-card-foreground);
+}
+
+/* Кастомный скролл */
+.options::-webkit-scrollbar {
+  width: 6px;
+}
+
+.options::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary-transparent);
+  border-radius: 3px;
+}
+
+.options::-webkit-scrollbar-track {
+  background: transparent;
+}

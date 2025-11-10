@@ -1,0 +1,112 @@
+.checkboxLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.2s ease;
+}
+
+.checkboxLabel:hover {
+  opacity: 0.8;
+}
+
+.checkboxLabel.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hiddenInput {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.customCheckbox {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border-light);
+  border-radius: 4px;
+  background: var(--color-input-background);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.error {
+  border: 2px solid var(--color-error);
+
+}
+
+.customCheckbox:hover {
+  border-color: var(--color-primary-light);
+  box-shadow: 0 0 0 3px var(--color-primary-transparent);
+}
+
+.customCheckbox.checked {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.checkIcon {
+  width: 12px;
+  height: 10px;
+  color: white;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.2s ease;
+}
+.customCheckbox.checked .checkIcon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.labelText {
+  color: var(--text-silver);
+  font-size: 14px;
+  font-weight: 400;
+  transition: color 0.2s ease;
+}
+
+.checkboxLabel:hover .labelText {
+  color: var(--text-silver-300);
+}
+
+.checkboxLabel:focus-within .customCheckbox {
+  border-color: var(--color-primary-hover);
+  box-shadow: 0 0 0 3px var(--color-primary-transparent);
+}
+
+/* Анимация при изменении состояния */
+.customCheckbox {
+  animation: pulse 0.2s ease;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Для disabled состояния */
+.checkboxLabel.disabled .customCheckbox {
+  border-color: var(--color-border);
+  background: var(--color-card);
+}
+
+.checkboxLabel.disabled .customCheckbox.checked {
+  background: var(--color-primary-transparent);
+  border-color: var(--color-border);
+}
+
+.checkboxLabel.disabled .checkIcon {
+  color: var(--text-silver-dark);
+}

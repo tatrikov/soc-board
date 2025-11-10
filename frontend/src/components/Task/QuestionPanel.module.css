@@ -1,0 +1,103 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--border-radius) * 1.2);
+  padding: 1.5rem;
+  gap: 1.25rem;
+  height: 100%;
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.title {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--color-card-foreground);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--border-radius) * 0.9);
+  background: rgba(15, 23, 42, 0.02);
+  color: var(--color-card-foreground);
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.option:hover {
+  border-color: var(--color-primary);
+  background: rgba(49, 130, 206, 0.08);
+  transform: translateY(-1px);
+}
+
+.optionSelected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-transparent);
+  box-shadow: 0 12px 24px rgba(49, 130, 206, 0.16);
+}
+
+.optionPrefix {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-card);
+  border: 1px solid var(--color-border-light);
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.optionSelected .optionPrefix {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.optionText {
+  flex: 1;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: auto;
+}
+
+.submitButton {
+  width: 100%;
+}
+
+.statusMessage {
+  font-size: var(--text-xs);
+  color: var(--text-silver-dark);
+}
+
+@media (max-width: 1024px) {
+  .panel {
+    height: auto;
+  }
+}
+

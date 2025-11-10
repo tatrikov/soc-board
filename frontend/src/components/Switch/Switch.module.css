@@ -1,0 +1,80 @@
+.toggleSwitch {
+  position: relative;
+  width: var(--toggle-width, 51px);
+  height: var(--toggle-height, 31px);
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.toggleTrack {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: var(
+    --custom-inactive-color, 
+    var(--color-border-light, #ccc)
+  );
+  border-radius: var(--toggle-height, 31px);
+  transition: background-color 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.toggleSwitch[aria-checked="true"] .toggleTrack {
+  background-color: var(
+    --custom-active-color, 
+    var(--color-primary, #4caf50)
+  );
+}
+
+.toggleThumb {
+  position: absolute;
+  top: var(--thumb-position, 2px);
+  left: var(--thumb-position, 2px);
+  width: var(--thumb-size, 27px);
+  height: var(--thumb-size, 27px);
+  background-color: var(
+    --custom-thumb-color, 
+    var(--color-background, white)
+  );
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggleSwitch[aria-checked="true"] .toggleThumb {
+  transform: translateX(var(--thumb-translate, 20px));
+}
+
+.toggleSwitch:focus-visible .toggleTrack {
+  outline: 2px solid var(--color-primary, #0066cc);
+  outline-offset: 2px;
+}
+
+.toggleSwitch:hover .toggleTrack {
+  filter: brightness(0.9);
+}
+
+.toggleSwitch:active .toggleThumb {
+  transform: translateX(
+    calc(
+      var(--is-checked, 0) * var(--thumb-translate, 20px) + 
+      var(--is-checked, 0) * var(--thumb-size, 27px) * 0.1
+    )
+  );
+  width: calc(var(--thumb-size, 27px) * 1.1);
+}
+
+.toggleSwitch[aria-checked="true"]:active .toggleThumb {
+  transform: translateX(
+    calc(
+      var(--thumb-translate, 20px) - 
+      var(--thumb-size, 27px) * 0.1
+    )
+  );
+  width: calc(var(--thumb-size, 27px) * 1.1);
+}

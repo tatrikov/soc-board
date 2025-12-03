@@ -1,36 +1,354 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# API Документация
 
-## Getting Started
+## Эндпоинты сервера
 
-First, run the development server:
+### 1. Получение задачи
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+**Эндпоинт:** `GET /tasks/{taskId}`
+
+**Описание:** Возвращает полную информацию о задаче, включая начальный вопрос и все события терминалов.
+
+**Параметры:**
+- `taskId` (string, path) - идентификатор задачи
+
+**Ответ:** `TaskResponse` (200 OK)
+
+**Пример запроса:**
+```
+GET /tasks/demo-task-1
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 2. Отправка ответа на вопрос
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Эндпоинт:** `POST /tasks/{taskId}/answer`
 
-## Learn More
+**Описание:** Отправляет ответ пользователя на текущий вопрос задачи. Сервер возвращает обновление состояния задачи (новые события, следующий вопрос или статус завершения).
 
-To learn more about Next.js, take a look at the following resources:
+**Параметры:**
+- `taskId` (string, path) - идентификатор задачи
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Тело запроса:**
+```json
+{
+  "answer": 0,
+  "questionId": "question-id-123"
+}
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Поля тела запроса:**
+- `answer` (number) - индекс выбранного варианта ответа (начинается с 0)
+- `questionId` (string) - идентификатор вопроса, на который даётся ответ
 
-## Deploy on Vercel
+**Ответ:** `TaskUpdateResponse` (200 OK)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Пример запроса:**
+```
+POST /tasks/demo-task-1/answer
+Content-Type: application/json
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+{
+  "answer": 1,
+  "questionId": "demo-question-initial"
+}
+```
+
+---
+
+## Типы данных
+
+### TerminalKind
+
+Тип терминала, определяющий способ отображения информации.
+
+```typescript
+type TerminalKind = 'log' | 'monitor' | 'capture'
+```
+
+**Варианты:**
+- `'log'` - обычный текстовый лог
+- `'monitor'` - терминал с метриками мониторинга (CPU, память, сеть)
+- `'capture'` - терминал для отображения захваченного сетевого трафика
+
+---
+
+### TaskQuestion
+
+Вопрос задачи с вариантами ответа.
+
+```typescript
+interface TaskQuestion {
+  id: string              // Уникальный идентификатор вопроса
+  text: string            // Текст вопроса
+  options: string[]       // Массив вариантов ответа
+}
+```
+
+**Пример:**
+```json
+{
+  "id": "demo-question-initial",
+  "text": "Какое действие выполнить первым?",
+  "options": [
+    "Изолировать рабочую станцию.",
+    "Сообщить пользователю о подозрительном трафике.",
+    "Проигнорировать событие."
+  ]
+}
+```
+
+---
+
+### MonitorMetrics
+
+Метрики мониторинга для терминала типа `monitor`.
+
+```typescript
+interface MonitorMetrics {
+  cpu: number             // Загрузка CPU в процентах (0-100)
+  memory: number          // Использование памяти в процентах (0-100)
+  network?: number        // Сетевая активность в МБ/с (опционально)
+}
+```
+
+**Пример:**
+```json
+{
+  "cpu": 63,
+  "memory": 70,
+  "network": 9
+}
+```
+
+---
+
+### CaptureRecord
+
+Запись захваченного сетевого трафика для терминала типа `capture`.
+
+```typescript
+interface CaptureRecord {
+  time: string            // Время записи в формате "HH:mm:ss.SSS"
+  source: string          // IP-адрес источника
+  destination: string     // IP-адрес назначения
+  protocol: string        // Протокол (например, "TLS", "HTTP", "TCP")
+  info: string            // Дополнительная информация о пакете
+}
+```
+
+**Пример:**
+```json
+{
+  "time": "12:42:18.412",
+  "source": "10.0.5.23",
+  "destination": "185.213.11.4",
+  "protocol": "TLS",
+  "info": "Client Key Exchange, Change Cipher Spec"
+}
+```
+
+---
+
+### TaskEvent
+
+Событие терминала, которое должно быть отображено в определённое время.
+
+```typescript
+interface TaskEvent {
+  terminal: number                    // Номер терминала (ключ для группировки событий)
+  title: string                       // Заголовок вкладки терминала
+  timeout: number                     // Задержка в секундах относительно начала задачи
+  text?: string                       // Текстовое сообщение для лога (опционально)
+  type?: TerminalKind                 // Тип терминала (опционально, по умолчанию 'log')
+  metrics?: MonitorMetrics            // Метрики для терминала типа 'monitor' (опционально)
+  capture?: CaptureRecord             // Запись трафика для терминала типа 'capture' (опционально)
+}
+```
+
+**Примеры:**
+
+Обычный лог:
+```json
+{
+  "terminal": 1,
+  "title": "proxy",
+  "timeout": 1,
+  "text": "[22s] proxy: GET /login.php"
+}
+```
+
+Терминал мониторинга:
+```json
+{
+  "terminal": 99,
+  "title": "monitor",
+  "type": "monitor",
+  "timeout": 4,
+  "metrics": {
+    "cpu": 63,
+    "memory": 70,
+    "network": 9
+  }
+}
+```
+
+Терминал захвата трафика:
+```json
+{
+  "terminal": 4,
+  "title": "WireShark",
+  "type": "capture",
+  "timeout": 5,
+  "capture": {
+    "time": "12:42:18.412",
+    "source": "10.0.5.23",
+    "destination": "185.213.11.4",
+    "protocol": "TLS",
+    "info": "Client Key Exchange, Change Cipher Spec"
+  }
+}
+```
+
+---
+
+### TaskData (TaskResponse)
+
+Полная информация о задаче, возвращаемая эндпоинтом `GET /tasks/{taskId}`.
+
+```typescript
+interface TaskData {
+  id: string                  // Идентификатор задачи
+  title: string               // Заголовок сценария
+  description?: string        // Описание сценария (опционально)
+  question: TaskQuestion      // Начальный вопрос задачи
+  events: TaskEvent[]         // Массив всех событий терминалов
+}
+```
+
+**Пример ответа:**
+```json
+{
+  "id": "demo-task-1",
+  "title": "Демо-сценарий: подозрительный трафик",
+  "description": "Наблюдаем за тремя терминалами и делаем вывод по вопросу.",
+  "question": {
+    "id": "demo-question-initial",
+    "text": "Какое действие выполнить первым?",
+    "options": [
+      "Изолировать рабочую станцию.",
+      "Сообщить пользователю о подозрительном трафике.",
+      "Проигнорировать событие."
+    ]
+  },
+  "events": [
+    {
+      "terminal": 1,
+      "title": "proxy",
+      "text": "[22s] proxy: GET /login.php",
+      "timeout": 1
+    },
+    {
+      "terminal": 2,
+      "title": "siem",
+      "text": "[25s] siem: правило утечки данных",
+      "timeout": 4
+    }
+  ]
+}
+```
+
+---
+
+### TaskUpdateResponse
+
+Ответ сервера на отправку ответа пользователя (`POST /tasks/{taskId}/answer`).
+
+```typescript
+interface TaskUpdateResponse {
+  question?: TaskQuestion              // Следующий вопрос (если есть)
+  events?: TaskEvent[]                 // Новые события терминалов (если есть)
+  message?: string                     // Сообщение для пользователя (опционально)
+  status?: 'continue' | 'win' | 'lose' // Статус сценария (опционально)
+  statusMessage?: string               // Сообщение о статусе (опционально)
+}
+```
+
+**Поля:**
+- `question` - следующий вопрос задачи. Если отсутствует, текущий вопрос остаётся активным.
+- `events` - массив новых событий, которые должны быть добавлены к существующим терминалам или созданы для новых терминалов.
+- `message` - текстовое сообщение, отображаемое пользователю (например, "Ответ отправлен").
+- `status` - статус сценария:
+  - `'continue'` - сценарий продолжается
+  - `'win'` - сценарий успешно завершён
+  - `'lose'` - сценарий завершён с ошибкой
+- `statusMessage` - сообщение, отображаемое при завершении сценария (для статусов `'win'` или `'lose'`).
+
+**Пример ответа (продолжение сценария):**
+```json
+{
+  "message": "Ответ отправлен. Новые события уже поступают.",
+  "status": "continue",
+  "question": {
+    "id": "demo-question-followup",
+    "text": "Какое действие выполнить следующим шагом?",
+    "options": [
+      "Проверить состояние остальных хостов.",
+      "Сообщить пользователю о возможном инциденте.",
+      "Создать тикет на эскалацию в группу реагирования."
+    ]
+  },
+  "events": [
+    {
+      "terminal": 2,
+      "title": "siem",
+      "timeout": 2,
+      "text": "SIEM: подтверждение корреляции по IOC #4453, статус – критический"
+    },
+    {
+      "terminal": 99,
+      "title": "monitor",
+      "type": "monitor",
+      "timeout": 4,
+      "metrics": {
+        "cpu": 63,
+        "memory": 70,
+        "network": 9
+      }
+    }
+  ]
+}
+```
+
+**Пример ответа (победа):**
+```json
+{
+  "status": "win",
+  "statusMessage": "Отлично! Вы успешно завершили сценарий.",
+  "message": "Правильный ответ!"
+}
+```
+
+**Пример ответа (поражение):**
+```json
+{
+  "status": "lose",
+  "statusMessage": "Сценарий завершён. Попробуйте ещё раз.",
+  "message": "Неверный ответ."
+}
+```
+
+---
+
+## Примечания
+
+1. **Временные задержки:** Поле `timeout` в `TaskEvent` указывает задержку в секундах относительно начала задачи. События воспроизводятся последовательно с учётом этих задержек.
+
+2. **Терминалы:** События группируются по номеру терминала (`terminal`). Если событие приходит для нового терминала, он автоматически создаётся в интерфейсе.
+
+3. **Типы терминалов:** Тип терминала (`type`) может быть установлен в первом событии для данного терминала. Если тип не указан, по умолчанию используется `'log'`.
+
+4. **Метрики и захваты:** Для терминалов типа `monitor` поле `metrics` обновляет текущие значения метрик. Для терминалов типа `capture` поле `capture` добавляет новую запись в список захваченного трафика.
+
+5. **Статусы завершения:** Когда сервер возвращает статус `'win'` или `'lose'`, все запланированные события отменяются, и пользователю показывается итоговое сообщение.
+

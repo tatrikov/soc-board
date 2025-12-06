@@ -1,0 +1,220 @@
+{
+  "id": "bruteforce-task-1",
+  "title": "Brute-force атака на веб-портал",
+  "description": "Определите характер активности и выберите правильные шаги реагирования.",
+  "initialQuestionId": "q1",
+
+  "questions": {
+    "q1": {
+      "text": "Что за активность наблюдается в логах?",
+      "options": [
+        "Массовые ошибки авторизации — похоже на brute-force.",
+        "Пользователь забыл пароль.",
+        "Нормальная активность — всё в порядке.",
+        "Признаки вирусного заражения."
+      ],
+      "correct": 0
+    },
+    "q2": {
+      "text": "Какой уровень критичности у этого инцидента?",
+      "options": [
+        "Некритично, можно просто наблюдать.",
+        "Высокий риск компрометации — требуется реагирование.",
+        "Это технический сбой.",
+        "Это нормальная активность."
+      ],
+      "correct": 1
+    },
+    "q3": {
+      "text": "Какое действие нужно выполнить в первую очередь?",
+      "options": [
+        "Заблокировать IP-адрес и уведомить администратора.",
+        "Перезапустить веб-сервер.",
+        "Создать тикет для разработчиков.",
+        "Изменить пароль администратора."
+      ],
+      "correct": 0
+    }
+  },
+
+  "events": {
+    "initial": [
+      { "terminal": 1, "title": "proxy", "timeout": 1,  "text": "[12:30:01] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 2,  "text": "[12:30:02] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 3,  "text": "[12:30:03] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 4,  "text": "[12:30:04] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 5,  "text": "[12:30:05] 185.213.11.4 -> POST /login 401 (user=root)" },
+      { "terminal": 1, "title": "proxy", "timeout": 6,  "text": "[12:30:06] 185.213.11.4 -> POST /login 401 (user=test)" },
+      { "terminal": 1, "title": "proxy", "timeout": 7,  "text": "[12:30:07] 185.213.11.4 -> POST /login 401 (user=guest)" },
+      { "terminal": 1, "title": "proxy", "timeout": 8,  "text": "[12:30:08] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 9,  "text": "[12:30:09] 185.213.11.4 -> POST /login 401 (user=administrator)" },
+      { "terminal": 1, "title": "proxy", "timeout": 10, "text": "[12:30:10] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 11, "text": "[12:30:11] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 12, "text": "[12:30:12] 185.213.11.4 -> POST /login 401 (user=guest)" },
+      { "terminal": 1, "title": "proxy", "timeout": 13, "text": "[12:30:13] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 14, "text": "[12:30:14] 185.213.11.4 -> POST /login 401 (user=root)" },
+      { "terminal": 1, "title": "proxy", "timeout": 15, "text": "[12:30:15] 185.213.11.4 -> POST /login 401 (user=admin)" },
+
+      { "terminal": 1, "title": "proxy", "timeout": 16, "text": "[12:30:16] 185.213.11.5 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 17, "text": "[12:30:17] 185.213.11.5 -> POST /login 401 (user=test_qa)" },
+      { "terminal": 1, "title": "proxy", "timeout": 18, "text": "[12:30:18] 185.213.11.5 -> POST /login 401 (user=guest)" },
+      { "terminal": 1, "title": "proxy", "timeout": 19, "text": "[12:30:19] 185.213.11.5 -> POST /login 401 (user=manager)" },
+      { "terminal": 1, "title": "proxy", "timeout": 20, "text": "[12:30:20] 185.213.11.5 -> POST /login 401 (user=admin)" },
+
+      { "terminal": 1, "title": "proxy", "timeout": 21, "text": "[12:30:21] 31.152.77.20 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 22, "text": "[12:30:22] 31.152.77.20 -> POST /login 401 (user=sysadmin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 23, "text": "[12:30:23] 31.152.77.20 -> POST /login 401 (user=operator)" },
+      { "terminal": 1, "title": "proxy", "timeout": 24, "text": "[12:30:24] 31.152.77.20 -> POST /login 401 (user=dbadmin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 25, "text": "[12:30:25] 31.152.77.20 -> POST /login 401 (user=admin)" },
+
+      { "terminal": 1, "title": "proxy", "timeout": 26, "text": "[12:30:26] 45.83.192.10 -> POST /login 401 (user=service_account_01)" },
+      { "terminal": 1, "title": "proxy", "timeout": 27, "text": "[12:30:27] 45.83.192.10 -> POST /login 401 (user=service_account_02)" },
+      { "terminal": 1, "title": "proxy", "timeout": 28, "text": "[12:30:28] 45.83.192.10 -> POST /login 401 (user=backup)" },
+      { "terminal": 1, "title": "proxy", "timeout": 29, "text": "[12:30:29] 45.83.192.10 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 30, "text": "[12:30:30] 45.83.192.10 -> POST /login 401 (user=admin)" },
+
+      { "terminal": 1, "title": "proxy", "timeout": 31, "text": "[12:30:31] 185.213.11.4 -> POST /login 401 (user=superadmin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 32, "text": "[12:30:32] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 33, "text": "[12:30:33] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 34, "text": "[12:30:34] 185.213.11.4 -> POST /login 401 (user=guest)" },
+      { "terminal": 1, "title": "proxy", "timeout": 35, "text": "[12:30:35] 185.213.11.4 -> POST /login 401 (user=operator)" },
+
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 4,  "metrics": { "cpu": 55, "memory": 68, "network": 2 } },
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 10, "metrics": { "cpu": 58, "memory": 70, "network": 2 } },
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 16, "metrics": { "cpu": 60, "memory": 72, "network": 3 } },
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 22, "metrics": { "cpu": 63, "memory": 73, "network": 3 } },
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 28, "metrics": { "cpu": 66, "memory": 75, "network": 4 } },
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 34, "metrics": { "cpu": 68, "memory": 76, "network": 4 } },
+
+      { "terminal": 2, "title": "siem", "timeout": 5,  "text": "[SIEM][info] Multiple failed login attempts detected for user=admin" },
+      { "terminal": 2, "title": "siem", "timeout": 12, "text": "[SIEM][info] Repeated failures from src=185.213.11.4" },
+      { "terminal": 2, "title": "siem", "timeout": 18, "text": "[SIEM][info] Multiple sources with failed logins (possible distributed attempt)" },
+      { "terminal": 2, "title": "siem", "timeout": 24, "text": "[SIEM][info] Threshold exceeded: 20 failed attempts in 1 minute (src=185.213.11.4)" },
+      { "terminal": 2, "title": "siem", "timeout": 30, "text": "[SIEM][warning] 3+ IPs show similar failed login pattern" },
+      { "terminal": 2, "title": "siem", "timeout": 36, "text": "[SIEM][warning] Login failures persisted (40+ attempts). Possible brute-force attack." }
+    ],
+
+    "q1_correct": [
+      { "terminal": 2,  "title": "siem", "timeout": 40, "text": "[SIEM][high] Brute-force pattern confirmed (user=admin, multiple sources)" },
+      { "terminal": 1,  "title": "proxy", "timeout": 41, "text": "[12:31:01] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1,  "title": "proxy", "timeout": 42, "text": "[12:31:02] 185.213.11.5 -> POST /login 401 (user=admin)" },
+      { "terminal": 1,  "title": "proxy", "timeout": 43, "text": "[12:31:03] 31.152.77.20 -> POST /login 401 (user=sysadmin)" },
+      { "terminal": 1,  "title": "proxy", "timeout": 44, "text": "[12:31:04] 45.83.192.10 -> POST /login 401 (user=service_account_01)" },
+
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 45, "metrics": { "cpu": 69, "memory": 77, "network": 5 } },
+      { "terminal": 2,  "title": "siem", "timeout": 46, "text": "[SIEM][info] Automated correlation rule triggered (event=BRUTEFORCE_4453)" },
+
+      { "terminal": 1,  "title": "proxy", "timeout": 47, "text": "[12:31:07] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1,  "title": "proxy", "timeout": 48, "text": "[12:31:08] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1,  "title": "proxy", "timeout": 49, "text": "[12:31:09] 185.213.11.5 -> POST /login 401 (user=operator)" },
+      { "terminal": 1,  "title": "proxy", "timeout": 50, "text": "[12:31:10] 31.152.77.20 -> POST /login 401 (user=dbadmin)" },
+      { "terminal": 1,  "title": "proxy", "timeout": 51, "text": "[12:31:11] 45.83.192.10 -> POST /login 401 (user=admin)" },
+
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 52, "metrics": { "cpu": 71, "memory": 78, "network": 5 } },
+      { "terminal": 2,  "title": "siem", "timeout": 53, "text": "[SIEM][warning] High rate of auth failures persists after detection" },
+
+      { "terminal": 1,  "title": "proxy", "timeout": 54, "text": "[12:31:14] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1,  "title": "proxy", "timeout": 55, "text": "[12:31:15] 185.213.11.5 -> POST /login 401 (user=test_qa)" },
+      { "terminal": 1,  "title": "proxy", "timeout": 56, "text": "[12:31:16] 31.152.77.20 -> POST /login 401 (user=sysadmin)" },
+      { "terminal": 1,  "title": "proxy", "timeout": 57, "text": "[12:31:17] 45.83.192.10 -> POST /login 401 (user=service_account_02)" },
+
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 58, "metrics": { "cpu": 73, "memory": 79, "network": 6 } },
+      { "terminal": 2,  "title": "siem", "timeout": 59, "text": "[SIEM][high] Recommended: escalation to incident response team (SOC Tier-2)" }
+    ],
+
+    "q1_wrong": [
+      { "terminal": 2, "title": "siem", "timeout": 40, "text": "[SIEM][warning] Analyst classification: activity treated as non-critical" },
+      { "terminal": 1, "title": "proxy", "timeout": 41, "text": "[12:31:01] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 42, "text": "[12:31:02] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 43, "text": "[12:31:03] 185.213.11.5 -> POST /login 401 (user=sysadmin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 44, "text": "[12:31:04] 31.152.77.20 -> POST /login 401 (user=operator)" },
+
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 45, "metrics": { "cpu": 70, "memory": 77, "network": 5 } },
+
+      { "terminal": 2, "title": "siem", "timeout": 46, "text": "[SIEM][warning] Brute-force indicators persist with no mitigation action applied" },
+      { "terminal": 1, "title": "proxy", "timeout": 47, "text": "[12:31:07] 45.83.192.10 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 48, "text": "[12:31:08] 185.213.11.4 -> POST /login 401 (user=superadmin)" },
+
+      { "terminal": 2, "title": "siem", "timeout": 49, "text": "[SIEM][high] Escalation: prolonged attack window without response" },
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 50, "metrics": { "cpu": 75, "memory": 80, "network": 6 } }
+    ],
+
+    "q2_correct": [
+      { "terminal": 2, "title": "siem", "timeout": 70, "text": "[SIEM][high] Severity confirmed as HIGH. Incident BRUTEFORCE_4453 opened." },
+      { "terminal": 1, "title": "proxy", "timeout": 71, "text": "[12:31:31] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 72, "text": "[12:31:32] 185.213.11.5 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 73, "text": "[12:31:33] 31.152.77.20 -> POST /login 401 (user=sysadmin)" },
+
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 74, "metrics": { "cpu": 76, "memory": 81, "network": 6 } },
+      { "terminal": 2, "title": "siem", "timeout": 75, "text": "[SIEM][info] IR playbook suggested: block source IPs, lock targeted accounts" },
+
+      { "terminal": 1, "title": "proxy", "timeout": 76, "text": "[12:31:36] 45.83.192.10 -> POST /login 401 (user=backup)" },
+      { "terminal": 1, "title": "proxy", "timeout": 77, "text": "[12:31:37] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 78, "text": "[12:31:38] 185.213.11.5 -> POST /login 401 (user=admin)" },
+
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 79, "metrics": { "cpu": 77, "memory": 82, "network": 6 } },
+      { "terminal": 2, "title": "siem", "timeout": 80, "text": "[SIEM][high] SOC notified and incident assigned to analyst." }
+    ],
+
+    "q2_wrong": [
+      { "terminal": 2, "title": "siem", "timeout": 70, "text": "[SIEM][warning] Severity downgraded by analyst. Monitoring only." },
+      { "terminal": 1, "title": "proxy", "timeout": 71, "text": "[12:31:31] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 72, "text": "[12:31:32] 185.213.11.4 -> POST /login 401 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 73, "text": "[12:31:33] 185.213.11.5 -> POST /login 401 (user=sysadmin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 74, "text": "[12:31:34] 31.152.77.20 -> POST /login 401 (user=operator)" },
+
+      { "terminal": 1, "title": "proxy", "timeout": 75, "text": "[12:31:35] 185.213.11.4 -> POST /login 200 (user=admin) — SUCCESS" },
+      { "terminal": 2, "title": "siem", "timeout": 76, "text": "[SIEM][critical] Successful login after extended brute-force sequence." },
+
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 77, "metrics": { "cpu": 83, "memory": 84, "network": 7 } },
+      { "terminal": 1, "title": "proxy", "timeout": 78, "text": "[12:31:38] 185.213.11.4 -> GET /admin/dashboard 200 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 79, "text": "[12:31:39] 185.213.11.4 -> GET /admin/users 200 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 80, "text": "[12:31:40] 185.213.11.4 -> GET /admin/audit 200 (user=admin)" }
+    ],
+
+    "q3_correct": [
+      { "terminal": 2, "title": "siem", "timeout": 100, "text": "[SIEM][info] Analyst action: IPs 185.213.11.4, 185.213.11.5, 31.152.77.20 blocked on firewall." },
+      { "terminal": 1, "title": "proxy", "timeout": 101, "text": "[12:32:01] BLOCK RULE: drop incoming traffic from 185.213.11.4" },
+      { "terminal": 1, "title": "proxy", "timeout": 102, "text": "[12:32:02] BLOCK RULE: drop incoming traffic from 185.213.11.5" },
+      { "terminal": 1, "title": "proxy", "timeout": 103, "text": "[12:32:03] BLOCK RULE: drop incoming traffic from 31.152.77.20" },
+
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 104, "metrics": { "cpu": 55, "memory": 72, "network": 3 } },
+      { "terminal": 2, "title": "siem", "timeout": 105, "text": "[SIEM][high] Brute-force attack source blocked. No new failed logins from blocked IPs." },
+
+      { "terminal": 1, "title": "proxy", "timeout": 106, "text": "[12:32:06] 185.213.11.4 -> POST /login 403 (blocked by firewall)" },
+      { "terminal": 1, "title": "proxy", "timeout": 107, "text": "[12:32:07] 185.213.11.5 -> POST /login 403 (blocked by firewall)" },
+
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 108, "metrics": { "cpu": 48, "memory": 69, "network": 2 } },
+      { "terminal": 2, "title": "siem", "timeout": 109, "text": "[SIEM][resolved] Incident BRUTEFORCE_4453 marked as MITIGATED." }
+    ],
+
+    "q3_wrong": [
+      { "terminal": 2, "title": "siem", "timeout": 100, "text": "[SIEM][warning] No blocking action taken. Credentials may already be compromised." },
+      { "terminal": 1, "title": "proxy", "timeout": 101, "text": "[12:32:01] 185.213.11.4 -> POST /login 200 (user=admin) — SUCCESS" },
+      { "terminal": 1, "title": "proxy", "timeout": 102, "text": "[12:32:02] 185.213.11.4 -> GET /admin/dashboard 200 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 103, "text": "[12:32:03] 185.213.11.4 -> GET /admin/users 200 (user=admin)" },
+
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 104, "metrics": { "cpu": 86, "memory": 85, "network": 8 } },
+      { "terminal": 2, "title": "siem", "timeout": 105, "text": "[SIEM][critical] Suspicious admin activity from external IP 185.213.11.4" },
+
+      { "terminal": 1, "title": "proxy", "timeout": 106, "text": "[12:32:06] 185.213.11.4 -> GET /admin/export?type=users 200 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 107, "text": "[12:32:07] 185.213.11.4 -> GET /admin/export?type=transactions 200 (user=admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 108, "text": "[12:32:08] 185.213.11.4 -> GET /admin/logs 200 (user=admin)" },
+
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 109, "metrics": { "cpu": 88, "memory": 87, "network": 10 } },
+      { "terminal": 2, "title": "siem", "timeout": 110, "text": "[SIEM][critical] Possible data exfiltration in progress." },
+
+      { "terminal": 1, "title": "proxy", "timeout": 111, "text": "[12:32:11] 185.213.11.4 -> POST /admin/user 200 (create user=backdoor_admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 112, "text": "[12:32:12] 185.213.11.4 -> POST /admin/role 200 (grant role=SUPERADMIN to backdoor_admin)" },
+
+      { "terminal": 2, "title": "siem", "timeout": 113, "text": "[SIEM][critical] Privilege escalation detected on account backdoor_admin." },
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 114, "metrics": { "cpu": 90, "memory": 88, "network": 11 } },
+
+      { "terminal": 1, "title": "proxy", "timeout": 115, "text": "[12:32:15] 185.213.11.4 -> GET /backup/download/full 200 (user=backdoor_admin)" },
+      { "terminal": 1, "title": "proxy", "timeout": 116, "text": "[12:32:16] 185.213.11.4 -> GET /backup/download/logs 200 (user=backdoor_admin)" },
+
+      { "terminal": 2, "title": "siem", "timeout": 117, "text": "[SIEM][breach] Large outbound transfer of backup archives detected." },
+      { "terminal": 99, "title": "monitor", "type": "monitor", "timeout": 118, "metrics": { "cpu": 92, "memory": 90, "network": 15 } }
+    ]
+  }
+}

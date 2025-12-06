@@ -1,0 +1,208 @@
+{
+  "id": "exfiltration-task-1",
+  "title": "Обнаружение утечки данных",
+  "description": "Анализируйте сетевую и системную активность, чтобы определить факт и степень утечки конфиденциальных данных.",
+  "initialQuestionId": "q1",
+
+  "questions": {
+    "q1": {
+      "text": "Какая активность прослеживается в системе?",
+      "options": [
+        "Начальные признаки сбора данных перед утечкой.",
+        "Обычная рабочая нагрузка сервера.",
+        "Легитимное резервное копирование.",
+        "Ошибка приложений."
+      ],
+      "correct": 0
+    },
+    "q2": {
+      "text": "Каков уровень критичности инцидента?",
+      "options": [
+        "Низкий — наблюдаем.",
+        "Средний — возможная подготовка к утечке.",
+        "Высокий — активная утечка данных.",
+        "Не является инцидентом."
+      ],
+      "correct": 2
+    },
+    "q3": {
+      "text": "Какое действие необходимо выполнить в первую очередь?",
+      "options": [
+        "Заблокировать соединение и остановить подозрительные процессы.",
+        "Перезапустить сервер.",
+        "Подождать дополнительных логов.",
+        "Создать тикет в отдел разработки."
+      ],
+      "correct": 0
+    }
+  },
+
+  "events": {
+    "initial": [
+      { "terminal": 1, "title": "proxy", "timeout": 1, "text": "[10:04:11] 192.168.1.33 -> GET /documents/list" },
+      { "terminal": 1, "title": "proxy", "timeout": 2, "text": "[10:04:12] 192.168.1.33 -> GET /documents/confidential.pdf" },
+      { "terminal": 1, "title": "proxy", "timeout": 3, "text": "[10:04:13] 192.168.1.33 -> GET /documents/hr_db_backup.zip" },
+
+      { "terminal": 5, "title": "filesystem", "timeout": 4, "text": "[fs] user=svc_backup enumerated directory /var/data/reports" },
+      { "terminal": 5, "title": "filesystem", "timeout": 5, "text": "[fs] read file: salaries_2024.xlsx" },
+      { "terminal": 5, "title": "filesystem", "timeout": 6, "text": "[fs] read file: contracts/nda_list.docx" },
+
+      { "terminal": 3, "title": "wireshark", "type": "capture", "timeout": 7,
+        "capture": { "time": "10:04:17", "source": "192.168.1.33", "destination": "185.212.44.91",
+                      "protocol": "TLS", "info": "Client Hello — SNI: api-file-sync.com" }
+      },
+
+      { "terminal": 2, "title": "siem", "timeout": 8, "text": "[SIEM][info] Unusual file access: 3 sensitive files by svc_backup" },
+
+      { "terminal": 4, "title": "monitor", "type": "monitor", "timeout": 9,
+        "metrics": { "cpu": 45, "memory": 60, "network": 3 } },
+
+      { "terminal": 5, "title": "filesystem", "timeout": 10, "text": "[fs] user=svc_backup zipped directory /var/data/reports -> reports_2024.zip" },
+      { "terminal": 5, "title": "filesystem", "timeout": 11, "text": "[fs] created archive contracts_pack.zip (size=42MB)" },
+
+      { "terminal": 1, "title": "proxy", "timeout": 12, "text": "[10:04:22] 192.168.1.33 -> POST /upload/checksum" },
+      { "terminal": 3, "title": "wireshark", "timeout": 13,
+        "capture": { "time": "10:04:23", "source": "192.168.1.33", "destination": "185.212.44.91",
+                     "protocol": "TLS", "info": "Encrypted Application Data (24KB)" }
+      },
+
+      { "terminal": 2, "title": "siem", "timeout": 14, "text": "[SIEM][low] Increase in outbound TLS traffic (source=192.168.1.33)" },
+
+      { "terminal": 4, "title": "monitor", "timeout": 15, "metrics": { "cpu": 47, "memory": 62, "network": 10 } },
+
+      { "terminal": 5, "title": "filesystem", "timeout": 16, "text": "[fs] user=svc_backup accessed /var/db/hr/" },
+      { "terminal": 5, "title": "filesystem", "timeout": 17, "text": "[fs] read file: employees_full.csv" },
+      { "terminal": 5, "title": "filesystem", "timeout": 18, "text": "[fs] read file: finance/annual_budget_2024.xlsx" },
+
+      { "terminal": 3, "title": "wireshark", "timeout": 19,
+        "capture": { "time": "10:04:29", "source": "192.168.1.33", "destination": "185.212.44.91",
+                     "protocol": "TLS", "info": "Encrypted Application Data (52KB)" }
+      },
+
+      { "terminal": 4, "title": "monitor", "timeout": 20, "metrics": { "cpu": 52, "memory": 63, "network": 14 } },
+
+      { "terminal": 2, "title": "siem", "timeout": 21, "text": "[SIEM][info] Pattern detected: sequential access to sensitive directories" },
+
+      { "terminal": 1, "title": "proxy", "timeout": 22, "text": "[10:04:32] 192.168.1.33 -> POST /sync/upload" },
+      { "terminal": 1, "title": "proxy", "timeout": 23, "text": "[10:04:33] 192.168.1.33 -> POST /sync/upload (52MB payload)" },
+
+      { "terminal": 4, "title": "monitor", "timeout": 24, "metrics": { "cpu": 58, "memory": 64, "network": 20 } },
+
+      { "terminal": 3, "title": "wireshark", "timeout": 25,
+        "capture": { "time": "10:04:35", "source": "192.168.1.33", "destination": "185.212.44.91",
+                     "protocol": "TLS", "info": "Large TLS Transfer — suspected data exfiltration" }
+      },
+
+      { "terminal": 5, "title": "filesystem", "timeout": 26, "text": "[fs] archive payroll_2024.zip created (size=78MB)" },
+      { "terminal": 5, "title": "filesystem", "timeout": 27, "text": "[fs] user=svc_backup executed script exfil.sh" },
+
+      { "terminal": 2, "title": "siem", "timeout": 28, "text": "[SIEM][medium] Suspicious automation: script execution + outbound traffic" },
+
+      { "terminal": 4, "title": "monitor", "timeout": 29, "metrics": { "cpu": 63, "memory": 65, "network": 28 } },
+
+      { "terminal": 3, "title": "wireshark", "timeout": 30,
+        "capture": { "time": "10:04:40", "source": "192.168.1.33", "destination": "185.212.44.91",
+                     "protocol": "TLS", "info": "High-volume encrypted tunnel established" }
+      },
+
+      { "terminal": 1, "title": "proxy", "timeout": 31, "text": "[10:04:41] 192.168.1.33 -> POST /sync/upload (91MB payload)" },
+      { "terminal": 2, "title": "siem", "timeout": 32, "text": "[SIEM][medium] Unusual data transfer volumes for user=svc_backup" },
+
+      { "terminal": 4, "title": "monitor", "timeout": 33, "metrics": { "cpu": 66, "memory": 67, "network": 35 } },
+
+      { "terminal": 5, "title": "filesystem", "timeout": 34, "text": "[fs] read file: /var/data/finance/taxes_2024.pdf" },
+      { "terminal": 5, "title": "filesystem", "timeout": 35, "text": "[fs] read file: /var/data/finance/clients_list.xlsx" },
+
+      { "terminal": 3, "title": "wireshark", "timeout": 36,
+        "capture": { "time": "10:04:45", "source": "192.168.1.33", "destination": "185.212.44.91",
+                     "protocol": "TLS", "info": "Encrypted Application Data (77KB)" }
+      },
+
+      { "terminal": 2, "title": "siem", "timeout": 37, "text": "[SIEM][warning] Potential data staging detected" },
+
+      { "terminal": 4, "title": "monitor", "timeout": 38, "metrics": { "cpu": 70, "memory": 70, "network": 42 } },
+
+      { "terminal": 1, "title": "proxy", "timeout": 39, "text": "[10:04:48] 192.168.1.33 -> POST /sync/upload (113MB payload)" },
+      { "terminal": 2, "title": "siem", "timeout": 40, "text": "[SIEM][warning] Multiple large outbound transfers detected" },
+
+      { "terminal": 3, "title": "wireshark", "timeout": 41,
+        "capture": { "time": "10:04:52",
+                     "source": "192.168.1.33", "destination": "185.212.44.91",
+                     "protocol": "TLS", "info": "Encrypted burst — 180KB" }
+      },
+
+      { "terminal": 4, "title": "monitor", "timeout": 42, "metrics": { "cpu": 72, "memory": 72, "network": 48 } },
+
+      { "terminal": 2, "title": "siem", "timeout": 43, "text": "[SIEM][high] Behavioral rule EXFIL_993 triggered" }
+    ],
+
+    "q1_correct": [
+      { "terminal": 2, "title": "siem", "timeout": 50, "text": "[SIEM][high] Analyst confirmed: data staging activity ongoing" },
+      { "terminal": 5, "title": "filesystem", "timeout": 51, "text": "[fs] new archive sensitive_pack.zip (122MB) created" },
+      { "terminal": 3, "title": "wireshark", "timeout": 52,
+        "capture": { "time": "10:05:11", "source": "192.168.1.33", "destination": "185.212.44.91",
+                     "protocol": "TLS", "info": "Continuous data stream" }
+      },
+      { "terminal": 4, "title": "monitor", "timeout": 53, "metrics": { "cpu": 73, "memory": 73, "network": 55 } },
+      { "terminal": 1, "title": "proxy", "timeout": 54, "text": "[10:05:12] POST /sync/upload (131MB payload)" }
+    ],
+
+    "q1_wrong": [
+      { "terminal": 2, "title": "siem", "timeout": 50, "text": "[SIEM][warning] Analyst did not flag activity; monitoring only" },
+      { "terminal": 3, "title": "wireshark", "timeout": 51,
+        "capture": { "time": "10:05:12", "source": "192.168.1.33",
+                     "destination": "185.212.44.91", "protocol": "TLS",
+                     "info": "Encrypted data — 240KB segment" }
+      },
+      { "terminal": 4, "title": "monitor", "timeout": 52, "metrics": { "cpu": 76, "memory": 75, "network": 62 } }
+    ],
+
+    "q2_correct": [
+      { "terminal": 2, "title": "siem", "timeout": 60, "text": "[SIEM][critical] Active data exfiltration — severity HIGH" },
+      { "terminal": 1, "title": "proxy", "timeout": 61, "text": "[10:05:21] POST /sync/upload (144MB payload)" },
+      { "terminal": 3, "title": "wireshark", "timeout": 62,
+        "capture": { "time": "10:05:22", "source": "192.168.1.33",
+                     "destination": "185.212.44.91", "protocol": "TLS",
+                     "info": "TLS stream continues — 310KB" }
+      },
+      { "terminal": 4, "title": "monitor", "timeout": 63, "metrics": { "cpu": 79, "memory": 77, "network": 70 } }
+    ],
+
+    "q2_wrong": [
+      { "terminal": 2, "title": "siem", "timeout": 60, "text": "[SIEM][warning] Severity underestimated — unusual outbound load continues" },
+      { "terminal": 3, "title": "wireshark", "timeout": 61,
+        "capture": { "time": "10:05:20", "source": "192.168.1.33",
+                     "destination": "185.212.44.91", "protocol": "TLS",
+                     "info": "Encrypted block — 420KB" }
+      },
+      { "terminal": 4, "title": "monitor", "timeout": 62, "metrics": { "cpu": 82, "memory": 80, "network": 81 } }
+    ],
+
+    "q3_correct": [
+      { "terminal": 2, "title": "siem", "timeout": 70, "text": "[SIEM][resolved] Connection blocked; exfiltration terminated" },
+      { "terminal": 1, "title": "proxy", "timeout": 71, "text": "[10:05:30] BLOCK: outbound traffic to 185.212.44.91" },
+      { "terminal": 4, "title": "monitor", "timeout": 72, "metrics": { "cpu": 55, "memory": 70, "network": 5 } },
+      { "terminal": 3, "title": "wireshark", "timeout": 73,
+        "capture": { "time": "10:05:31", "source": "192.168.1.33",
+                     "destination": "185.212.44.91", "protocol": "TCP",
+                     "info": "RST — connection terminated" }
+      },
+      { "terminal": 5, "title": "filesystem", "timeout": 74, "text": "[fs] Suspicious script exfil.sh force-stopped" }
+    ],
+
+    "q3_wrong": [
+      { "terminal": 2, "title": "siem", "timeout": 70, "text": "[SIEM][critical] No action taken — exfiltration escalating" },
+      { "terminal": 3, "title": "wireshark", "timeout": 71,
+        "capture": { "time": "10:05:30", "source": "192.168.1.33",
+                     "destination": "185.212.44.91", "protocol": "TLS",
+                     "info": "Massive data burst — 1.2MB" }
+      },
+      { "terminal": 4, "title": "monitor", "timeout": 72, "metrics": { "cpu": 90, "memory": 88, "network": 95 } },
+      { "terminal": 5, "title": "filesystem", "timeout": 73,
+        "text": "[fs] user=svc_backup created archive mega_dump_2024.tar (412MB)" },
+      { "terminal": 1, "title": "proxy", "timeout": 74,
+        "text": "[10:05:31] POST /sync/upload (412MB payload) — SUCCESS" },
+      { "terminal": 2, "title": "siem", "timeout": 75, "text": "[SIEM][breach] DATA BREACH CONFIRMED" }
+    ]
+  }
+}

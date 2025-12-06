@@ -6,7 +6,7 @@ services:
     container_name: "socboard-frontend"
     # container_name: ${FRONTEND_HOST}
     ports:
-      - "5173:5173"
+      - "3000:3000"
     develop:
       watch:
         - action: sync
@@ -16,31 +16,22 @@ services:
     networks:
       - net
 
-  # socboard-backend:
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile.dev
-  #   container_name: "socboard-backend"
-  #   env_file:
-  #     - .env
-  #   ports:
-  #     - "8000:8000"
-  #     - "5678:5678"
-  #   # для общих миграций
-  #   volumes:
-  #     - ./backend:/app
-  #   develop:
-  #     watch:
-  #       - action: sync
-  #         path: ./backend
-  #         target: /app
-  #   depends_on:
-  #     socboard-db:
-  #       condition: service_healthy
-  #     socboard-redis:
-  #       condition: service_healthy
-  #   networks:
-  #     - net
+  socboard-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: "socboard-backend"
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+    develop:
+      watch:
+        - action: sync
+          path: ./backend
+          target: /app
+    networks:
+      - net
 
   socboard-nginx:
     image: nginx:1.27-alpine
@@ -48,7 +39,7 @@ services:
     hostname: nginx
     depends_on:
       - socboard-frontend
-      # - socboard-backend
+      - socboard-backend
     ports:
       - "8080:80"
     volumes:

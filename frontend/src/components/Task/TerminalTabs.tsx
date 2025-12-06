@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import styles from './TerminalTabs.module.css'
 import type { CaptureRecord, MonitorMetrics, TerminalKind } from '../../types/task'
 
@@ -24,6 +24,7 @@ export const TerminalTabs: React.FC<TerminalTabsProps> = ({
   titles,
 }) => {
   const [activeTerminal, setActiveTerminal] = useState<number | null>(terminals[0] ?? null)
+  const streamRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!terminals.length) {
@@ -41,6 +42,18 @@ export const TerminalTabs: React.FC<TerminalTabsProps> = ({
   const activeCapture = activeTerminal !== null ? captureValues[activeTerminal] ?? [] : []
   const activeTitle =
     activeTerminal !== null ? titles[activeTerminal] ?? `Терминал ${activeTerminal}` : 'Терминал'
+
+  // Автоматическая прокрутка вниз при появлении новых событий
+  useEffect(() => {
+    if (streamRef.current) {
+      // Используем requestAnimationFrame для корректной прокрутки после рендера
+      requestAnimationFrame(() => {
+        if (streamRef.current) {
+          streamRef.current.scrollTop = streamRef.current.scrollHeight
+        }
+      })
+    }
+  }, [activeLogs, activeCapture, activeTerminal])
 
   const renderMonitor = () => {
     if (!activeMetrics) {
@@ -102,7 +115,7 @@ export const TerminalTabs: React.FC<TerminalTabsProps> = ({
       <div className={styles.tabBar} role="tablist" aria-label="Терминалы сценария">
         {terminals.map((terminal) => {
           const isActive = terminal === activeTerminal
-          const terminalTitle = titles[terminal] ?? `Терминал ${terminal}`
+          const terminalTitle = `${titles[terminal]} [${logs[terminal]?.length ?? 0}]`
 
           return (
             <button
@@ -141,7 +154,7 @@ export const TerminalTabs: React.FC<TerminalTabsProps> = ({
                     : activeTitle}
               </span>
             </div>
-            <div className={streamClassName}>
+            <div ref={streamRef} className={streamClassName}>
               {activeType === 'monitor'
                 ? renderMonitor()
                 : activeType === 'capture'

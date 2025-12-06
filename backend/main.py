@@ -13,7 +13,7 @@ TASKS_DIR = "."   # json лежат рядом с main.py
 
 def load_task(task_id: str):
     """Загружает JSON файл вида Tack_1.json"""
-    filename = f"{task_id}.json"
+    filename = f"Tack_{task_id}.json"
     path = os.path.join(TASKS_DIR, filename)
 
     if not os.path.exists(path):
@@ -116,4 +116,4 @@ def answer(task_id):
 # Старт
 # -----------------------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

@@ -1,13 +1,19 @@
 .page {
-  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
   padding: 2rem 2.5rem;
   background: linear-gradient(180deg, rgba(15, 23, 42, 0.02) 0%, rgba(15, 23, 42, 0.08) 100%);
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .layout {
   display: flex;
   gap: 1.75rem;
   align-items: stretch;
+  flex: 1;
+  min-height: 0;
 }
 
 .leftPane {
@@ -15,6 +21,8 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .rightPane {
@@ -31,6 +39,7 @@
   border-radius: calc(var(--border-radius) * 1.2);
   padding: 1.5rem;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+  flex-shrink: 0;
 }
 
 .taskTitle {
@@ -53,6 +62,7 @@
   color: #b91c1c;
   border: 1px solid rgba(248, 113, 113, 0.45);
   font-size: var(--text-sm);
+  flex-shrink: 0;
 }
 
 .placeholderCard {
@@ -126,23 +136,70 @@
     flex-direction: column;
   }
 
+  .leftPane {
+    min-height: 0;
+    overflow: visible;
+  }
+
   .rightPane {
     width: 100%;
     min-width: 0;
+    flex-shrink: 0;
   }
 }
 
 @media (max-width: 768px) {
   .page {
-    padding: 1.5rem;
+    padding: 1rem;
+    min-height: 100vh;
+    height: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .layout {
+    gap: 1rem;
+  }
+
+  .leftPane {
+    gap: 1rem;
+    min-height: auto;
+    overflow: visible;
   }
 
   .taskInfo {
     flex-direction: column;
+    padding: 1rem;
   }
 
   .taskTitle {
     font-size: var(--text-xl);
+  }
+
+  .taskDescription {
+    font-size: var(--text-xs);
+  }
+
+  .rightPane {
+    flex-shrink: 0;
+  }
+
+  .placeholderCard {
+    min-height: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 0.75rem;
+  }
+
+  .taskInfo {
+    padding: 0.75rem;
+  }
+
+  .taskTitle {
+    font-size: var(--text-lg);
   }
 }
 

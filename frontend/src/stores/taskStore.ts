@@ -117,16 +117,17 @@ export class TaskStore {
     this.gameStatus = 'in_progress'
     this.gameMessage = null
 
-    // Если API не передали, значит работаем в демо-режиме.
-    if (!apiBase) {
-      this.applyTask(this.buildFallbackTask(taskId))
-      this.loading = false
-      return
-    }
+    // // Если API не передали, значит работаем в демо-режиме.
+    // if (!apiBase || !(apiBase === '')) {
+    //   this.applyTask(this.buildFallbackTask(taskId))
+    //   this.loading = false
+    //   return
+    // }
 
     try {
       // Тянем полные данные задачи.
-      const response = await fetch(`${apiBase}/tasks/${taskId}`, {
+      const apiUrl = apiBase ? `${apiBase}/tasks/${taskId}` : `/tasks/${taskId}`
+      const response = await fetch(apiUrl, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       })
@@ -174,17 +175,12 @@ export class TaskStore {
     // Показываем, что началась отправка.
     this.submissionStatus = 'Отправляем ответ...'
 
-    // В демо-режиме просто проигрываем заранее заготовленные события.
-    if (!this.apiBase) {
-      const fallback = this.buildFallbackUpdate()
-      this.appendTaskUpdate(fallback)
-      this.submissionStatus = fallback.message ?? 'Ответ отправлен (демо).'
-      return
-    }
-
     try {
       // Передаём ответ и id вопроса, чтобы бэкенд понимал, что мы пытаемся решить.
-      const response = await fetch(`${this.apiBase}/tasks/${this.taskId}/answer`, {
+      const apiUrl = this.apiBase 
+        ? `${this.apiBase}/tasks/${this.taskId}/answer` 
+        : `/tasks/${this.taskId}/answer`
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

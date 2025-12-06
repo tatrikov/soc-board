@@ -2,7 +2,8 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
 .tabBar {
@@ -13,6 +14,7 @@
   border-radius: 999px;
   align-items: center;
   flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
 .tabButton {
@@ -56,7 +58,7 @@
   position: relative;
   flex: 1;
   display: flex;
-  min-height: 360px;
+  min-height: 10rem;
   background-color: #0f172a;
   border-radius: calc(var(--border-radius) * 1.2);
   border: 1px solid rgba(148, 163, 184, 0.3);
@@ -77,6 +79,9 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .terminalHeader {
@@ -86,6 +91,7 @@
   padding: 0.75rem 1rem;
   background: rgba(15, 23, 42, 0.9);
   border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  flex-shrink: 0;
 }
 
 .headerDot {
@@ -115,11 +121,14 @@
 .logStream {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 1rem;
   font-family: 'Fira Code', 'JetBrains Mono', 'SFMono-Regular', ui-monospace, monospace;
   font-size: 0.875rem;
   color: rgba(226, 232, 240, 0.95);
   background: rgba(15, 23, 42, 0.92);
+  min-height: 0;
+  scroll-behavior: smooth;
 }
 
 .logLine {
@@ -143,6 +152,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow-y: auto;
+  min-height: 0;
+  scroll-behavior: smooth;
 }
 
 .captureStream {
@@ -151,6 +163,9 @@
   justify-content: center;
   padding: 1.5rem;
   background: rgba(7, 21, 47, 0.9);
+  overflow-y: auto;
+  min-height: 0;
+  scroll-behavior: smooth;
 }
 
 .captureTableWrapper {
@@ -283,5 +298,116 @@
 
 .gauge_accent {
   --gauge-color: #22c55e;
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    min-height: 0;
+  }
+
+  .terminalSurface {
+    min-height: 200px;
+    max-height: 50vh;
+    height: 50vh;
+    flex: 0 0 auto;
+  }
+
+  .terminalContent {
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .tabButton {
+    min-width: 100px;
+    padding: 0.4rem 0.9rem;
+    font-size: var(--text-xs);
+  }
+
+  .tabLabel {
+    font-size: var(--text-xs);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+  }
+
+  .logStream {
+    padding: 0.75rem;
+    font-size: 0.8rem;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    min-height: 0;
+    flex: 1;
+    max-height: 100%;
+  }
+
+  .monitorStream {
+    overflow-y: auto !important;
+    min-height: 0;
+    flex: 1;
+    max-height: 100%;
+  }
+
+  .captureStream {
+    overflow-y: auto !important;
+    min-height: 0;
+    flex: 1;
+    max-height: 100%;
+  }
+
+  .logLine {
+    padding: 0.35rem 0.5rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .captureTable {
+    font-size: 0.7rem;
+  }
+
+  .captureTable th,
+  .captureTable td {
+    padding: 0.4rem 0.5rem;
+  }
+
+  .monitorGrid {
+    gap: 1rem;
+  }
+
+  .gauge {
+    width: 100px;
+  }
+
+  .gaugeValue {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .terminalSurface {
+    min-height: 150px;
+    max-height: 40vh;
+    height: 40vh;
+  }
+
+  .tabButton {
+    min-width: 80px;
+    padding: 0.35rem 0.7rem;
+  }
+
+  .tabLabel {
+    max-width: 90px;
+  }
+
+  .captureTableWrapper {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .captureTable {
+    min-width: 600px;
+  }
 }
 

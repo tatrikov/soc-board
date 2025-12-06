@@ -36,7 +36,7 @@ export default function TaskPage() {
   } = useTaskStore()
 
   useEffect(() => {
-    void loadTask(normalizedId, process.env.NEXT_PUBLIC_API_URL)
+    void loadTask(normalizedId, '')
   }, [normalizedId, loadTask])
 
   useEffect(() => {

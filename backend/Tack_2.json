@@ -1,0 +1,153 @@
+{
+  "id": "ddos-task-1",
+  "title": "DDoS-атака на веб-портал",
+  "description": "Определите характер сетевой активности и выберите корректные шаги реагирования.",
+
+  "questions": {
+    "q1": {
+      "id": "q1",
+      "text": "Что происходит с веб-порталом?",
+      "options": [
+        "Резкое увеличение количества запросов — вероятно DDoS.",
+        "Обычный пик нагрузки.",
+        "Проблема в базе данных.",
+        "Пользовательская ошибка клиента."
+      ],
+      "correct": 0
+    },
+    "q2": {
+      "id": "q2",
+      "text": "Какой тип атаки наиболее вероятен?",
+      "options": [
+        "HTTP Flood.",
+        "DNS Amplification.",
+        "Brute-force.",
+        "SQL Injection."
+      ],
+      "correct": 0
+    },
+    "q3": {
+      "id": "q3",
+      "text": "Что следует сделать в первую очередь?",
+      "options": [
+        "Ограничить трафик по IP/ASN.",
+        "Перезапустить сервер без анализа.",
+        "Отключить сайт полностью.",
+        "Игнорировать и подождать."
+      ],
+      "correct": 0
+    }
+  },
+
+  "events": {
+    "initial": [
+      { "terminal": 1, "title": "proxy", "timeout": 1, "text": "[proxy] 12:10:01 GET / 200 - 20ms" },
+      { "terminal": 1, "timeout": 2, "text": "[proxy] 12:10:02 GET /login 200 - 22ms" },
+      { "terminal": 1, "timeout": 3, "text": "[proxy] 12:10:03 GET / 200 - 19ms" },
+      { "terminal": 3, "title": "monitor", "type": "monitor", "timeout": 4, "metrics": { "cpu": 18, "memory": 40, "network": 50 } },
+      { "terminal": 2, "title": "siem", "timeout": 5, "text": "[SIEM] Traffic threshold normal." },
+      { "terminal": 1, "timeout": 6, "text": "[proxy] 12:10:06 GET / 200 - 25ms" },
+      { "terminal": 3, "timeout": 7, "metrics": { "cpu": 22, "memory": 42, "network": 120 } },
+      { "terminal": 2, "timeout": 8, "text": "[SIEM] Slight anomaly detected: traffic +40%." },
+      { "terminal": 1, "timeout": 9, "text": "[proxy] 12:10:09 GET /api/data 200 - 24ms" },
+      { "terminal": 3, "timeout": 10, "metrics": { "cpu": 28, "memory": 45, "network": 220 } },
+      { "terminal": 2, "timeout": 11, "text": "[SIEM] Unusual IP pattern: many new clients." },
+      { "terminal": 1, "timeout": 12, "text": "[proxy] 12:10:12 GET / 200 (IP 45.66.21.1)" },
+      { "terminal": 1, "timeout": 13, "text": "[proxy] 12:10:13 GET / 200 (IP 45.66.21.2)" },
+      { "terminal": 1, "timeout": 14, "text": "[proxy] 12:10:14 GET / 200 (IP 45.66.21.3)" },
+      { "terminal": 3, "timeout": 15, "metrics": { "cpu": 35, "memory": 48, "network": 320 } },
+      { "terminal": 2, "timeout": 16, "text": "[SIEM][notice] Rapid increase: +300% traffic" },
+      { "terminal": 1, "timeout": 17, "text": "[proxy] 12:10:17 GET / 200 (IP 45.66.21.4)" },
+      { "terminal": 1, "timeout": 18, "text": "[proxy] 12:10:18 GET / 200 (IP 45.66.21.5)" },
+      { "terminal": 1, "timeout": 19, "text": "[proxy] 12:10:19 GET / 200 (IP 45.66.21.6)" },
+      { "terminal": 3, "timeout": 20, "metrics": { "cpu": 48, "memory": 52, "network": 520 } },
+      { "terminal": 2, "timeout": 21, "text": "[SIEM][warning] Traffic spike exceeds baseline ×5" },
+      { "terminal": 1, "timeout": 22, "text": "[proxy] 12:10:22 GET / 429 Too Many Requests" },
+      { "terminal": 1, "timeout": 23, "text": "[proxy] 12:10:23 GET / 429 Too Many Requests" },
+      { "terminal": 3, "timeout": 24, "metrics": { "cpu": 70, "memory": 60, "network": 950 } },
+      { "terminal": 2, "timeout": 25, "text": "[SIEM][critical] DoS-like behavior from 45.66.0.0/16" },
+      { "terminal": 1, "timeout": 26, "text": "[proxy] 12:10:26 GET / 503 Service Unavailable" },
+      { "terminal": 1, "timeout": 27, "text": "[proxy] 12:10:27 GET / 503 Service Unavailable" },
+      { "terminal": 3, "timeout": 28, "metrics": { "cpu": 85, "memory": 70, "network": 1500 } },
+      { "terminal": 2, "timeout": 29, "text": "[SIEM][attack] Possible DDoS pattern detected" }
+    ],
+
+    "q1_correct": [
+      { "terminal": 2, "timeout": 30, "text": "[SIEM][analysis] Classification: HTTP Flood" },
+      { "terminal": 1, "timeout": 31, "text": "[proxy] Flood continues — 1200 req/s" },
+      { "terminal": 3, "timeout": 32, "metrics": { "cpu": 88, "memory": 72, "network": 1700 } },
+      { "terminal": 1, "timeout": 33, "text": "[proxy] 12:10:34 GET / 503 (IP 45.66.21.88)" },
+      { "terminal": 2, "timeout": 34, "text": "[SIEM][info] Multiple subnets involved" },
+      { "terminal": 1, "timeout": 35, "text": "[proxy] 12:10:36 GET / 503 (IP 103.77.55.21)" },
+      { "terminal": 1, "timeout": 36, "text": "[proxy] 12:10:37 GET / 503 (IP 103.77.55.22)" },
+      { "terminal": 3, "timeout": 37, "metrics": { "cpu": 92, "memory": 75, "network": 1900 } },
+      { "terminal": 2, "timeout": 38, "text": "[SIEM] Attack sources rotating rapidly" },
+      { "terminal": 1, "timeout": 39, "text": "[proxy] 12:10:40 GET / 503 (IP 103.77.55.23)" }
+    ],
+
+    "q1_wrong": [
+      { "terminal": 2, "timeout": 30, "text": "[SIEM][warning] Misclassification detected." },
+      { "terminal": 1, "timeout": 31, "text": "[proxy] Request rate now 1600 req/s" },
+      { "terminal": 3, "timeout": 32, "metrics": { "cpu": 92, "memory": 74, "network": 2000 } },
+      { "terminal": 2, "timeout": 33, "text": "[SIEM] Attack continues unmitigated" },
+      { "terminal": 1, "timeout": 34, "text": "[proxy] 12:10:42 GET / 503" },
+      { "terminal": 1, "timeout": 35, "text": "[proxy] 12:10:43 GET / 503" },
+      { "terminal": 3, "timeout": 36, "metrics": { "cpu": 95, "memory": 76, "network": 2300 } },
+      { "terminal": 2, "timeout": 37, "text": "[SIEM][alert] System degradation observed" },
+      { "terminal": 1, "timeout": 38, "text": "[proxy] 12:10:46 GET / 503" },
+      { "terminal": 3, "timeout": 39, "metrics": { "cpu": 98, "memory": 80, "network": 2600 } }
+    ],
+
+    "q2_correct": [
+      { "terminal": 2, "timeout": 40, "text": "[SIEM] Confirmed: HTTP Flood L7" },
+      { "terminal": 1, "timeout": 41, "text": "[proxy] Attack IPs moved to 185.66.x.x" },
+      { "terminal": 3, "timeout": 42, "metrics": { "cpu": 90, "memory": 78, "network": 2100 } },
+      { "terminal": 2, "timeout": 43, "text": "[SIEM] Botnet signatures detected" },
+      { "terminal": 1, "timeout": 44, "text": "[proxy] 12:10:50 GET / 503 (IP 185.66.11.4)" },
+      { "terminal": 1, "timeout": 45, "text": "[proxy] 12:10:51 GET / 503 (IP 185.66.11.7)" },
+      { "terminal": 3, "timeout": 46, "metrics": { "cpu": 93, "memory": 79, "network": 2200 } },
+      { "terminal": 2, "timeout": 47, "text": "[SIEM] Correlation: known botnet family DEADBEEF" },
+      { "terminal": 1, "timeout": 48, "text": "[proxy] 12:10:54 GET / 503" },
+      { "terminal": 3, "timeout": 49, "metrics": { "cpu": 96, "memory": 82, "network": 2350 } }
+    ],
+
+    "q2_wrong": [
+      { "terminal": 2, "timeout": 40, "text": "[SIEM][error] Incorrect assessment, mitigation delayed" },
+      { "terminal": 1, "timeout": 41, "text": "[proxy] 2500 req/s — service degraded" },
+      { "terminal": 3, "timeout": 42, "metrics": { "cpu": 96, "memory": 82, "network": 2600 } },
+      { "terminal": 2, "timeout": 43, "text": "[SIEM] Attack intensity growing" },
+      { "terminal": 1, "timeout": 44, "text": "[proxy] 12:10:49 GET / 503" },
+      { "terminal": 1, "timeout": 45, "text": "[proxy] 12:10:50 GET / 503" },
+      { "terminal": 3, "timeout": 46, "metrics": { "cpu": 98, "memory": 85, "network": 2800 } },
+      { "terminal": 2, "timeout": 47, "text": "[SIEM][critical] Approaching service outage" },
+      { "terminal": 1, "timeout": 48, "text": "[proxy] 12:10:53 GET / 503" },
+      { "terminal": 3, "timeout": 49, "metrics": { "cpu": 99, "memory": 88, "network": 3100 } }
+    ],
+
+    "q3_correct": [
+      { "terminal": 2, "timeout": 50, "text": "[SIEM] Rate-limiting enabled" },
+      { "terminal": 1, "timeout": 51, "text": "[proxy] Attack filtered — 503 reduced" },
+      { "terminal": 3, "timeout": 52, "metrics": { "cpu": 60, "memory": 60, "network": 800 } },
+      { "terminal": 2, "timeout": 53, "text": "[SIEM] IP range 45.66.0.0/16 blackholed" },
+      { "terminal": 1, "timeout": 54, "text": "[proxy] 12:11:00 GET / 200 — partial recovery" },
+      { "terminal": 3, "timeout": 55, "metrics": { "cpu": 55, "memory": 58, "network": 500 } },
+      { "terminal": 2, "timeout": 56, "text": "[SIEM] Botnet activity dropping" },
+      { "terminal": 1, "timeout": 57, "text": "[proxy] 12:11:03 GET / 200" },
+      { "terminal": 3, "timeout": 58, "metrics": { "cpu": 45, "memory": 52, "network": 300 } },
+      { "terminal": 2, "timeout": 59, "text": "[SIEM] Service stabilized" }
+    ],
+
+    "q3_wrong": [
+      { "terminal": 2, "timeout": 50, "text": "[SIEM][critical] Wrong action — no mitigation applied" },
+      { "terminal": 1, "timeout": 51, "text": "[proxy] 12:10:56 GET / 503 (full outage)" },
+      { "terminal": 3, "timeout": 52, "metrics": { "cpu": 98, "memory": 85, "network": 3000 } },
+      { "terminal": 2, "timeout": 53, "text": "[SIEM][breach] Service outage confirmed" },
+      { "terminal": 1, "timeout": 54, "text": "[proxy] 12:10:58 GET / 503" },
+      { "terminal": 1, "timeout": 55, "text": "[proxy] 12:10:59 GET / 503" },
+      { "terminal": 3, "timeout": 56, "metrics": { "cpu": 99, "memory": 90, "network": 3300 } },
+      { "terminal": 2, "timeout": 57, "text": "[SIEM][collapse] WAF overloaded" },
+      { "terminal": 1, "timeout": 58, "text": "[proxy] 12:11:02 GET / 503" },
+      { "terminal": 3, "timeout": 59, "metrics": { "cpu": 99, "memory": 95, "network": 3500 } }
+    ]
+  }
+}

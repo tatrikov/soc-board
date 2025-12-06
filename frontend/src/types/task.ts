@@ -38,3 +38,14 @@ export interface TaskData {
   question: TaskQuestion
   events: TaskEvent[]
 }
+
+export type TaskDifficulty = 'easy' | 'medium' | 'hard'
+export type TaskCategory = 'bruteforce' | 'ddos' | 'malware' | 'phishing' | 'other'
+
+export interface TaskListItem {
+  id: string
+  title: string
+  description: string
+  difficulty: TaskDifficulty
+  category: TaskCategory
+}

@@ -42,17 +42,31 @@ def get_task(task_id):
     if not task:
         abort(404)
 
+    initial_question_id = task["initialQuestionId"]
+    question_data = task["questions"][initial_question_id]
+    
+    # ГАРАНТИРУЕМ, что поле id будет в ответе
+    question_response = {
+        "id": initial_question_id,  # всегда добавляем
+        "text": question_data.get("text", ""),
+        "options": question_data.get("options", []),
+        "correct": question_data.get("correct", 0)
+    }
+    
+    # Добавляем все остальные поля из исходных данных
+    for key, value in question_data.items():
+        if key not in question_response:
+            question_response[key] = value
+    
     response = {
         "id": task["id"],
         "title": task["title"],
         "description": task.get("description"),
-        "question": task["questions"][task["initialQuestionId"]],
+        "question": question_response,
         "events": task["events"]["initial"]
     }
 
     return jsonify(response)
-
-
 # -----------------------------
 # POST /tasks/<task_id>/answer
 # -----------------------------

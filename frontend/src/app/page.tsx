@@ -22,6 +22,13 @@ const availableTasks: TaskListItem[] = [
     difficulty: 'easy',
     category: 'ddos',
   },
+  {
+    id: '3',
+    title: 'Обнаружение утечки данных',
+    description: 'Анализируйте сетевую и системную активность, чтобы определить факт и степень утечки конфиденциальных данных.',
+    difficulty: 'medium',
+    category: 'other',
+  },
 ]
 
 const difficultyLabels: Record<TaskListItem['difficulty'], string> = {

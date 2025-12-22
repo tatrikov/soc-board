@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import type {
   CaptureRecord,
   MonitorMetrics,
@@ -174,6 +174,7 @@ export class TaskStore {
 
     // Показываем, что началась отправка.
     this.submissionStatus = 'Отправляем ответ...'
+      console.log(this.question.id)
 
     try {
       // Передаём ответ и id вопроса, чтобы бэкенд понимал, что мы пытаемся решить.
@@ -195,11 +196,15 @@ export class TaskStore {
 
       const update = (await response.json()) as TaskUpdateResponse
       this.appendTaskUpdate(update)
-      this.submissionStatus = update.message ?? 'Ответ отправлен.'
+      runInAction(() => {
+              this.submissionStatus = update.message ?? 'Ответ отправлен.'
+      })
     } catch (error) {
       // Любая ошибка при отправке — показываем пользователю сообщение.
       console.error('Ошибка отправки ответа:', error)
-      this.submissionStatus = 'Не удалось отправить ответ. Попробуйте ещё раз.'
+      runInAction(() => {
+             this.submissionStatus = 'Не удалось отправить ответ. Попробуйте ещё раз.'
+      })
     }
   }
 

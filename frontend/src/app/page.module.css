@@ -111,7 +111,7 @@
   background: var(--color-primary-transparent);
   color: var(--color-primary-light);
   border-color: rgba(255, 106, 0, 0.3);
-}
+  }
 
 .taskDescription {
   font-size: var(--text-sm);
@@ -126,14 +126,14 @@
   align-items: center;
   padding-top: 0.5rem;
   border-top: 1px solid var(--color-border);
-}
+  }
 
 .taskLink {
   font-size: var(--text-sm);
   font-weight: 500;
   color: var(--color-primary);
   transition: color 0.2s ease;
-}
+  }
 
 .taskCard:hover .taskLink {
   color: var(--color-primary-hover);

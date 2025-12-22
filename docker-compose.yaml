@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  socboard-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: socboard-backend
+    restart: unless-stopped
+    environment:
+      - FLASK_ENV=production
+    networks:
+      - socboard-network
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import urllib.request; urllib.request.urlopen(\"http://localhost:5000/health\")'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  socboard-nginx:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: socboard-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - socboard-backend
+    networks:
+      - socboard-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  socboard-network:
+    driver: bridge
+

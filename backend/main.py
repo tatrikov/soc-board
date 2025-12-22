@@ -71,6 +71,12 @@ def get_task(task_id):
 # POST /tasks/<task_id>/answer
 # -----------------------------
 
+@app.route("/health", methods=["GET"])
+def health():
+    """Health check endpoint"""
+    return jsonify({"status": "healthy"}), 200
+
+
 @app.route("/tasks/<task_id>/answer", methods=["POST"])
 def answer(task_id):
     task = load_task(task_id)

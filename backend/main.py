@@ -1,8 +1,11 @@
 from flask import Flask, jsonify, request, abort
+from flask_cors import CORS
 import json
 import os
 
 app = Flask(__name__)
+# Включаем CORS для всех доменов (в продакшене можно ограничить)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 TASKS_DIR = "."   # json лежат рядом с main.py
 

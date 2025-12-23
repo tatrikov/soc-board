@@ -24,3 +24,4 @@ EXPOSE 5000
 # Запуск Flask приложения через gunicorn
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--threads", "2", "--timeout", "120", "--access-logfile", "-", "--error-logfile", "-", "main:app"]
 
+

@@ -90,6 +90,8 @@ export class TaskStore {
   }
 
   async loadTask(taskId: string | undefined, apiBase?: string) {
+    console.log('loadTask called with:', { taskId, apiBase, windowLocation: typeof window !== 'undefined' ? window.location.href : 'N/A' })
+    
     // Без id задачи бессмысленно идти дальше — покажем ошибку.
     if (!taskId) {
       this.error = 'Не удалось получить id задачи'
@@ -126,7 +128,17 @@ export class TaskStore {
 
     try {
       // Тянем полные данные задачи.
-      const apiUrl = apiBase ? `${apiBase}/tasks/${taskId}` : `/tasks/${taskId}`
+      // Если apiBase не передан, используем текущий origin (для работы с других устройств)
+      let apiUrl: string
+      if (apiBase) {
+        apiUrl = `${apiBase}/tasks/${taskId}`
+      } else {
+        // Используем абсолютный URL на основе текущего origin
+        const baseUrl = typeof window !== 'undefined' ? window.location.origin : ''
+        apiUrl = `${baseUrl}/tasks/${taskId}`
+      }
+      
+      console.log('Fetching task from:', apiUrl)
       const response = await fetch(apiUrl, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
@@ -178,9 +190,16 @@ export class TaskStore {
 
     try {
       // Передаём ответ и id вопроса, чтобы бэкенд понимал, что мы пытаемся решить.
-      const apiUrl = this.apiBase 
-        ? `${this.apiBase}/tasks/${this.taskId}/answer` 
-        : `/tasks/${this.taskId}/answer`
+      let apiUrl: string
+      if (this.apiBase) {
+        apiUrl = `${this.apiBase}/tasks/${this.taskId}/answer`
+      } else {
+        // Используем абсолютный URL на основе текущего origin
+        const baseUrl = typeof window !== 'undefined' ? window.location.origin : ''
+        apiUrl = `${baseUrl}/tasks/${this.taskId}/answer`
+      }
+      
+      console.log('Submitting answer to:', apiUrl)
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

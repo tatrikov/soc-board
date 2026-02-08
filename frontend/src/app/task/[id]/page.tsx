@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useEffect } from 'react'
-import { useParams } from 'next/navigation'
+import React, { useCallback, useEffect } from 'react'
+import { useParams, useRouter } from 'next/navigation'
 import { Header } from '../../../components/Header/Header'
 import { TerminalTabs } from '../../../components/Task/TerminalTabs'
 import { QuestionPanel } from '../../../components/Task/QuestionPanel'
@@ -10,6 +10,7 @@ import { useTaskStore } from '../../../stores/StoreProvider'
 
 export default function TaskPage() {
   const params = useParams<{ id: string | string[] }>()
+  const router = useRouter()
   const normalizedId = Array.isArray(params?.id) ? params.id[0] : params?.id
 
   const {
@@ -44,6 +45,16 @@ export default function TaskPage() {
       resetTask()
     }
   }, [resetTask])
+
+  const handleReplay = useCallback(() => {
+    resetTask()
+    void loadTask(normalizedId, '')
+  }, [resetTask, loadTask, normalizedId])
+
+  const handleGoHome = useCallback(() => {
+    resetTask()
+    router.push('/')
+  }, [resetTask, router])
 
   return (
     <div className={styles.page}>
@@ -87,11 +98,11 @@ export default function TaskPage() {
                     ? 'Сценарий завершён успешно!'
                     : gameStatus === 'lose'
                       ? 'Сценарий завершён неудачно.'
-                    : isStreamActive
-                    ? 'Дождитесь завершения потока событий и оцените новую ситуацию.'
-                    : loading
-                      ? 'Загрузка вопроса…'
-                      : 'Вопрос не найден для данной задачи.'}
+                      : isStreamActive
+                        ? 'Дождитесь завершения потока событий и оцените новую ситуацию.'
+                        : loading
+                          ? 'Загрузка вопроса…'
+                          : 'Вопрос не найден для данной задачи.'}
                 </span>
                 {(gameMessage || submissionStatus) && (
                   <span className={styles.placeholderStatus}>{gameMessage ?? submissionStatus}</span>
@@ -109,13 +120,26 @@ export default function TaskPage() {
               gameStatus === 'win' ? styles.resultCardWin : styles.resultCardLose
             }`}
           >
-            <h2 className={styles.resultTitle}>{gameStatus === 'win' ? 'Победа!' : 'Поражение'}</h2>
+            <div className={styles.resultIcon}>
+              {gameStatus === 'win' ? '🏆' : '💥'}
+            </div>
+            <h2 className={styles.resultTitle}>
+              {gameStatus === 'win' ? 'Победа!' : 'Поражение'}
+            </h2>
             <p className={styles.resultSubtitle}>
               {gameMessage ??
                 (gameStatus === 'win'
                   ? 'Вы успешно справились с инцидентом.'
                   : 'Сценарий завершён. Попробуйте разобрать ошибки и повторить.')}
             </p>
+            <div className={styles.resultActions}>
+              <button className={styles.resultBtnPrimary} onClick={handleReplay}>
+                Переиграть
+              </button>
+              <button className={styles.resultBtnSecondary} onClick={handleGoHome}>
+                На главную
+              </button>
+            </div>
           </div>
         </div>
       )}
